@@ -29,20 +29,27 @@ extern "C"
 	NJS_TEXNAME tripgear[5];
 	NJS_TEXLIST tripgear_texlist = { arrayptrandlength(tripgear) };
 
+	//NJS Type texture name and texture list. As is for old documentation.
+	NJS_TEXNAME tikal[15];
+	NJS_TEXLIST tikal_texlist = { arrayptrandlength(tikal) };
+	
+
 	//Define models
 	ModelInfo* MDLbigAccessory;
 	ModelInfo* MDLtripAccessory;
 	ModelInfo* MDLtripAccessory2;
+	ModelInfo* MDLtikalAccessory;
 
 	//create a UID for your accessory
 	int bigAccessoryID;
 	int triphatchaoAccessoryID;
 	int triparmorAccessoryID;
-
+	int tikalAccessoryID;
 	//Black Market Item Attributes
 	BlackMarketItemAttributes BMbigAccessory = { 1000, 500, 0, -1, -1, 0 };
 	BlackMarketItemAttributes BMtripAccessory = { 500, 200, 0, -1, -1, 0 };
 	BlackMarketItemAttributes BMtripAccessory2 = { 500, 200, 0, -1, -1, 0 };
+	BlackMarketItemAttributes BMtikalAccessory2 = { 2000, 1000, 0, -1, -1, 0 };
 	//Define a pointer function for pEvolveFunc
 	//Define a pointer function for pEvolveFunc
 	static bool CorrinEvolve(ObjectMaster* tp)
@@ -67,7 +74,7 @@ extern "C"
 	}
 	static bool TikalEvolve(ObjectMaster* tp)
 	{
-		if (tp->Data1.Chao->ChaoDataBase_ptr->Alignment > 0.70 && tp->Data1.Chao->ChaoDataBase_ptr->SA2BCharacterBonds[4].a > 70)
+		if (tp->Data1.Chao->ChaoDataBase_ptr->Alignment > 0.70 && tp->Data1.Chao->ChaoDataBase_ptr->SA2BCharacterBonds[4].a > 70 && strcmp(tp->Data1.Chao->ChaoDataBase_ptr->Name, "\x34\x49\x4B\x41\x4C") == 0)
 		{
 			PrintDebug("Chao evolving");
 			return true;
@@ -150,7 +157,7 @@ extern "C"
 	}
 	static bool EmerlEvolve(ObjectMaster* tp)
 	{
-		if (strcmp(tp->Data1.Chao->ChaoDataBase_ptr->Name, "\x27\x49\x5A\x4F\x44") == 0)
+		if (strcmp(tp->Data1.Chao->ChaoDataBase_ptr->Name, "\x27\x49\x5A\x4F\x49\x44") == 0)
 		{
 			PrintDebug("Chao evolving");
 			return true;
@@ -450,11 +457,15 @@ extern "C"
 		//register your textures here (by filename.pak)
 		cwe_api->RegisterChaoTexlistLoad("Triphat", &tripgear_texlist);
 
+	
+
 		//register your accessory here
 		triphatchaoAccessoryID = cwe_api->RegisterChaoAccessory(Head, MDLtripAccessory->getmodel(), &tripgear_texlist, &BMtripAccessory, "Trip Helmet", "Wear to avoid spoilers!");
 		//register your accessory here
 		triparmorAccessoryID = cwe_api->RegisterChaoAccessory(Generic1, MDLtripAccessory2->getmodel(), &tripgear_texlist, &BMtripAccessory2, "Trip Armor", "Wear to avoid spoilers!");
-
+		tikalAccessoryID = cwe_api->RegisterChaoAccessory(Generic1, MDLtikalAccessory->getmodel(), &tikal_texlist, &BMtikalAccessory2, "Tikal Jewlery", "Tikal crafted it lovingly for her chao.");
+		//register your textures here (by filename.pak)
+		cwe_api->RegisterChaoTexlistLoad("tiara", &tikal_texlist);
 	}
 	//initialization function - MUST exist in order to have CWE and SA2 see your mod
 	__declspec(dllexport) void Init(const char* path)
@@ -469,7 +480,7 @@ extern "C"
 	 enableeggman = config->getBool("", "Eggman Chao", true);
 	 enablerouge = config->getBool("", "Rouge Chao", true);
 	 enablelombax = config->getBool("", "Lombax Chao", true);
-	 enablebig = config->getBool("", "Big The Cat Chao", true);
+	 enablebig = config->getBool("", "Big the Cat Chao", true);
 	 enabletrip = config->getBool("", "Trip Chao", true);
 	 enableemerl = config->getBool("", "Emerl Chao", true);
 		delete config;
@@ -489,6 +500,11 @@ extern "C"
 		MDLtripChao = new ModelInfo(pathStr + "MDLTripChao.sa2mdl");
 		MDLemerlChao = new ModelInfo(pathStr + "MDLEmerlChao.sa2mdl");
 		RegisterDataFunc = (void (*)(void* ptr))GetProcAddress(h, "RegisterDataFunc");
+
+		MDLbigAccessory = new ModelInfo(pathStr + "Biggear.sa2mdl");
+		MDLtripAccessory = new ModelInfo(pathStr + "triphat.sa2mdl");
+		MDLtripAccessory2 = new ModelInfo(pathStr + "triparmor.sa2mdl");
+		MDLtikalAccessory = new ModelInfo(pathStr + "TIARA.sa2mdl");
 
 		RegisterDataFunc(CWELoad);
 	}
